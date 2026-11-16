@@ -72,7 +72,9 @@ Details: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 ![waveform](docs/img/waveform.png)
 
 ## Digital Logic Sim implementation
-The same 4-lane concept was built from gates in Digital Logic Sim - see [`dls/README.md`](dls/README.md).
+A gate-level **4-lane x 8-bit (32-bit vector)** SIMD chip, `SIMD_4LANE`, was built bottom-up in Digital Logic Sim
+(full adder -> 8-bit adder/subtractor -> 8-bit ALU -> registers -> `VECTOR-REGISTER-FILE` / `RESULT-REGISTER-FILE` -> `SIMD_4LANE`).
+It matches the Verilog configuration `LANES=4, W=8`. See [`dls/README.md`](dls/README.md) for the hierarchy, the DLS-to-Verilog mapping and the cross-check procedure.
 `vectors/DLS_TEST_SHEET_L4_W8.md` lists golden inputs/outputs; the same vectors are verified against the RTL (`tb/tb_vectors.v`), so RTL == Python model == DLS chip.
 
 ## Limitations (honest notes)
