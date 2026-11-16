@@ -1,16 +1,41 @@
-# SIMD Vector Processing Unit (4 lanes) - Verilog RTL, verification, scalar-vs-SIMD study, FPGA results
+# SIMD Vector Processing Unit - 4 lanes (Digital Logic Sim + Verilog)
 
-**Project 11 - SIMD Vector Processing Unit** (MCA mini-project, Intermediate+).
-A parameterised SIMD unit in Verilog (default 4 lanes x 16 bit) with a vector register file, parallel lane ALUs,
-vector control unit, lane MUXes, result combiner and scalar interface - plus a gate-level **4-lane SIMD chip built in
-Sebastian Lague's Digital Logic Sim (DLS)**, a like-for-like scalar baseline, a verification suite, and measured cycle / throughput /
-FPGA-resource / Fmax results.
+**Project 11 - SIMD Vector Processing Unit.** A SIMD unit performs the *same* operation on several data elements at once.
+We built a **4-lane x 8-bit SIMD chip from gates in Sebastian Lague's Digital Logic Sim (DLS)**, wrote a **Verilog mirror of every DLS chip**
+(verified against the DLS screenshots), generalised the idea into a **parameterised, pipelined Verilog SIMD core**, and compared **scalar vs SIMD** in
+cycle count, throughput, FPGA resources and maximum frequency.
 
 > Team: **[Member 1], [Member 2], [Member 3], [Member 4], [Member 5]**  |  Demo video: **[add link]**  |  Report: [`report/SIMD_VPU_IEEE_Report.docx`](report/SIMD_VPU_IEEE_Report.docx)
 
+## 1. The design we built: `SIMD_4LANE` in Digital Logic Sim + Verilog mirror
+`SIMD_4LANE` was built bottom-up from gates in Digital Logic Sim: **VECTOR-REGISTER-FILE (8 x 8-bit) -> 4 x 8-Bit-ALU -> RESULT-REGISTER-FILE (4 x 8-bit)**,
+one shared 3-bit opcode (ADD, SUB, AND, OR, XOR, COMPARE) driving four ALUs in parallel (e.g. `[10,20,30,40] - [1,2,3,4] = [9,18,27,36]` in a single step).
+All screenshots, the chip-by-chip explanation and the opcode table are in **[`dls/README.md`](dls/README.md)**.
+
+![SIMD_4LANE in DLS](dls/screenshots/01_simd_4lane_top.png)
+
+**Verilog mirror ([`dls_rtl/`](dls_rtl/))** - one Verilog module per DLS chip (`full_adder`, `rc_adder8`, `subtractor8`, `alu8`, `register8_en`, `vector_register_file`, `result_register_file`, `simd_4lane`, ...).
+`make dls` replays the exact screenshot cases and runs exhaustive, equivalence and streaming tests. Results (`results/DLS_MIRROR_RESULTS.md`):
+
+| DLS-style design | Result |
+|---|---|
+| Screenshot cases | 6 ALU operations + vector subtract: all match |
+| Scalar vs SIMD (64 elements) | **66 cycles (1 lane) vs 18 cycles (4 lanes) = 3.67x**; 2 / 8 / 16 lanes: 1.94x / 6.60x / 11.0x |
+| FPGA resources, 4 lanes | **257 LUT4, 96 FF** (iCE40); 134 LUT, 96 FF (Xilinx-7 estimate) |
+| Fmax, iCE40 HX8K | ~160 MHz (1 lane) / ~162 MHz (4 lanes) |
+| Mutation check | 9 / 9 injected bugs detected |
+
+**Generalised RTL ([`rtl/`](rtl/))** - the same idea extended into a parameterised, pipelined unit (16 operations, any lane count / width, scalar interface, bypassing) used for the wider scaling study below.
+The DLS operations are a subset of it: DLS opcodes `000-100` equal RTL ops ADD, SUB, AND, OR, XOR, and COMPARE = RTL `EQ` (`tb_dls_mirror` proves the two ALUs equivalent for all 393,216 input combinations).
+
+## 2. Generalised Verilog RTL - scaling study
+
+A parameterised SIMD unit (default 4 lanes x 16 bit) with a vector register file, parallel lane ALUs, vector control unit with hazard bypass, lane MUXes,
+result combiner and scalar interface; the scalar baseline is the same RTL with one lane.
+
 ![block diagram](docs/img/block_diagram.png)
 
-## Headline results (all reproducible with `make`)
+### Headline results of the generalised RTL (all reproducible with `make`)
 
 | Metric | Result |
 |---|---|
@@ -32,14 +57,15 @@ Full tables: [`results/RESULTS.md`](results/RESULTS.md).  Frequencies are iCE40 
 
 | Path | Content |
 |---|---|
-| `rtl/` | SIMD RTL: `lane_alu`, `simd_lane`, `vreg_file`, `vec_ctrl`, `result_combiner`, `simd_vpu` (top), `scalar_baseline`, `simd_defs.vh` |
-| `tb/` | Testbenches: `tb_lane_alu` (exhaustive), `tb_simd_vpu` (self-checking + coverage), `tb_perf` (scalar vs SIMD), `tb_vectors` (golden vectors) |
+| `dls_rtl/` | **Verilog mirror of the Digital Logic Sim chips** (one module per DLS chip) |
+| `rtl/` | Generalised SIMD RTL: `lane_alu`, `simd_lane`, `vreg_file`, `vec_ctrl`, `result_combiner`, `simd_vpu` (top), `scalar_baseline`, `simd_defs.vh` |
+| `tb/` | Testbenches: `tb_dls_mirror`, `tb_dls_perf` (DLS design); `tb_lane_alu`, `tb_simd_vpu`, `tb_perf`, `tb_vectors` (generalised RTL) |
 | `synth/` | `bench_top.v` - wrapper used for Fmax measurement |
 | `scripts/` | Python scripts behind the `make` targets, and the test-vector generator |
 | `vectors/` | Golden test vectors and printable DLS cross-check sheets |
-| `dls/` | Digital Logic Sim SIMD_4LANE design and screenshots |
+| `dls/` | **Digital Logic Sim SIMD_4LANE**: screenshots, chip-by-chip explanation, opcode table |
 | `results/` | Measured results: `RESULTS.md` (tables), CSVs, regression and mutation reports |
-| `docs/` | `ARCHITECTURE.md` and figures |
+| `docs/` | `ARCHITECTURE.md`, `VIDEO_SCRIPT.md`, figures |
 | `report/` | IEEE-format project report |
 
 ## Quick start
@@ -47,11 +73,13 @@ Full tables: [`results/RESULTS.md`](results/RESULTS.md).  Frequencies are iCE40 
 Requirements: Icarus Verilog (tested with 13), Yosys, nextpnr-ice40, Python 3. On macOS: `brew install icarus-verilog yosys nextpnr-ice40`.
 
 ```bash
-make test        # regression: ALU exhaustive + system TB (8 configs) + golden-vector replay
+make dls         # DLS-chip Verilog mirror: screenshot cases, tests, mutation check, 1-vs-4-lane cycles
+make test        # full regression: DLS mirror + ALU exhaustive + system TB (8 configs) + golden vectors
 make mutation    # 21 injected bugs, all must be caught
 make perf        # scalar (1 lane) vs 2/4/8/16 lanes -> results/perf_cycles.csv
 make demo        # cycle-by-cycle trace of the 4-lane run
-make synth       # FPGA resources and Fmax (~10 min)
+make dls-full    # + FPGA resources and Fmax of the DLS-style design (~5 min)
+make synth       # FPGA resources and Fmax of the generalised RTL (~10 min)
 ```
 
 `LANES` and `W` are parameters of every module, e.g.:
@@ -60,7 +88,7 @@ iverilog -g2012 -I rtl -Ptb_simd_vpu.LANES=8 -Ptb_simd_vpu.W=16 -o build/t.vvp t
 ```
 (no space after `-P`).
 
-## How the SIMD unit works (short)
+## How the generalised RTL works (short)
 
 * **ISA** - 32-bit instruction: `cls[31:29] op[28:25] vd[24:22] vs1[21:19] vs2[18:16] imm[15:0]`. Classes: VV (`vd = vs1 op vs2`), VS (second operand = broadcast scalar), VLD, VST, VSPLAT, SSET, VEXT, NOP. Compare ops return all-ones/zero per lane (usable as AND masks).
 * **Pipeline** - F (decode + hazard check, registered) -> E (register read + bypass, LANES x ALU, combine) -> W (write-back). One instruction per cycle, 2-cycle fill, no stalls.
@@ -71,13 +99,8 @@ Details: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ![waveform](docs/img/waveform.png)
 
-## Digital Logic Sim implementation
-A gate-level **4-lane x 8-bit (32-bit vector)** SIMD chip, `SIMD_4LANE`, was built bottom-up in Digital Logic Sim
-(full adder -> 8-bit adder/subtractor -> 8-bit ALU -> registers -> `VECTOR-REGISTER-FILE` / `RESULT-REGISTER-FILE` -> `SIMD_4LANE`).
-It matches the Verilog configuration `LANES=4, W=8`. See [`dls/README.md`](dls/README.md) for the hierarchy, the DLS-to-Verilog mapping and the cross-check procedure.
-`vectors/DLS_TEST_SHEET_L4_W8.md` lists golden inputs/outputs; the same vectors are verified against the RTL (`tb/tb_vectors.v`), so RTL == Python model == DLS chip.
-
 ## Limitations (honest notes)
+* DLS-style design: one operation per pass (no instruction decode, no result feedback path); the `COMPARE` relation (equality) and the control-input roles are assumptions to be confirmed against the DLS chip - see `dls/README.md` section 7.
 * Load/store bandwidth is assumed to scale with lane count (ideal memory); real systems would be bandwidth-limited.
 * N = 64 elements, so the 2-cycle pipeline fill is visible (efficiency 98 % at 4 lanes, 92 % at 16).
 * Fmax is from iCE40 place-and-route (nextpnr); Xilinx numbers are a Yosys *estimate* (LUT/FF/DSP counts, no timing). 

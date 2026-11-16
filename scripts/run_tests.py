@@ -35,6 +35,16 @@ def main():
         ok_all &= passed
         lines.append(("golden-vector replay W=%d" % w, "%s vectors / %s errors" % (m.group(1), m.group(3)) if m else "error", passed))
 
+    out = os.path.join(BUILD, "dlsm_reg.vvp")
+    rc, txt = run(["iverilog", "-g2012", "-I", RTL, "-o", out, os.path.join(TB, "tb_dls_mirror.v")] +
+                  sorted(os.path.join(ROOT, "dls_rtl", f) for f in os.listdir(os.path.join(ROOT, "dls_rtl")) if f.endswith(".v")) + [os.path.join(RTL, "lane_alu.v")])
+    if rc == 0:
+        rc, txt = run(["vvp", out])
+    open(os.path.join(LOGS, "tb_dls_mirror.log"), "w").write(txt)
+    passed = "DLS MIRROR TESTS PASSED" in txt
+    ok_all &= passed
+    lines.append(("DLS-chip mirror (dls_rtl)", "screenshot cases + 524,288 ALU + 393,216 equiv. + 4,000 streaming", passed))
+
     width = max(len(l[0]) for l in lines)
     txt = ["%-*s  %-60s %s" % (width, n, d, "PASS" if p else "FAIL") for n, d, p in lines]
     txt.append("")
