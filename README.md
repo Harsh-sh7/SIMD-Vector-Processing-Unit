@@ -100,7 +100,7 @@ Details: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 ![waveform](docs/img/waveform.png)
 
 ## Limitations (honest notes)
-* DLS-style design: one operation per pass (no instruction decode, no result feedback path); the `COMPARE` relation (equality) and the control-input roles are assumptions to be confirmed against the DLS chip - see `dls/README.md` section 7.
+* DLS-style design: one operation per pass (no instruction decode, no result feedback path); opcodes `110` / `111` are reserved and do nothing. The DLS project files are in `dls/project/`.
 * Load/store bandwidth is assumed to scale with lane count (ideal memory); real systems would be bandwidth-limited.
 * N = 64 elements, so the 2-cycle pipeline fill is visible (efficiency 98 % at 4 lanes, 92 % at 16).
 * Fmax is from iCE40 place-and-route (nextpnr); Xilinx numbers are a Yosys *estimate* (LUT/FF/DSP counts, no timing). 

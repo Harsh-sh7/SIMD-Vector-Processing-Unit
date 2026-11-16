@@ -13,7 +13,7 @@ Every chip below has a Verilog counterpart in [`../dls_rtl/`](../dls_rtl/) that 
 ## 1. Top level - `SIMD_4LANE`
 ![SIMD_4LANE](screenshots/01_simd_4lane_top.png)
 
-* **Inputs (left):** operand vector **A** = 10, 20, 30, 40 and operand vector **B** = 1, 2, 3, 4 (eight 8-bit inputs), four single-bit control inputs, and a 4-bit control input that a `4-1BIT` chip splits into single-bit lines for the ALUs.
+* **Inputs (left):** operand vector **A** = 10, 20, 30, 40 and operand vector **B** = 1, 2, 3, 4 (eight 8-bit inputs), four single-bit control inputs (`LOAD-A`, `LOAD-B`, `Clk`, `RESULT_WRITE`), and a 4-bit input `IN` that carries the opcode. A `4-1BIT` splitter turns it into single wires: three of them (S2, S1, S0) go to all four ALUs; the fourth wire is unused (DLS only offers 4-bit inputs, the design needs 3).
 * **VECTOR-REGISTER-FILE** (green) stores A and B. Its outputs feed the **four `8-Bit-ALU`** chips (lane 0-3) - each lane receives one byte of A and the matching byte of B.
 * **RESULT-REGISTER-FILE** (purple) captures the four lane results.
 * **Outputs (right):** 9, 18, 27, 36 = A - B lane by lane (opcode SUB). Four subtractions happened in the same step.
@@ -28,8 +28,8 @@ Five operator chips and a comparator all see the same inputs A and B; the **`8-1
 | `010` | AND | `8-Bit-AND` | 96 & 112 = **96** |
 | `011` | OR | `8-Bit-OR` | 96 \| 112 = **112** |
 | `100` | XOR | `8-Bit-XOR` | 96 ^ 112 = **16** |
-| `101` | COMPARE | `COMPARE` -> `1BIT-8BIT` | 112 vs 112 -> **255** (all ones = true) |
-| `110`, `111` | not used | mux inputs unconnected | - |
+| `101` | COMPARE | `COMPARE` -> `1BIT-8BIT` | 112 vs 112 -> **255** (equal); different values -> **0** |
+| `110`, `111` | reserved | mux inputs unconnected | do nothing yet |
 
 | ADD `000` | SUB `001` | AND `010` |
 |---|---|---|
@@ -40,7 +40,7 @@ Five operator chips and a comparator all see the same inputs A and B; the **`8-1
 | ![](screenshots/08_alu_or.png) | ![](screenshots/09_alu_xor.png) | ![](screenshots/10_alu_compare.png) |
 
 (The opcode values were read directly from the lit/unlit select bulbs in these screenshots, top bulb = most significant bit.)
-`COMPARE` produces one bit; `1BIT-8BIT` copies it into all eight bits, so a true comparison reads 255 and can be used as a lane mask.
+`COMPARE` is an `8-Bit-SUBTRACTOR` followed by an `8-1-ZERO` detector, so it produces 1 when A - B = 0, i.e. when A = B. `1BIT-8BIT` copies that bit into all eight bits, so equal -> 255 and not equal -> 0, usable as a lane mask.
 
 ## 3. Storage
 | Chip | Screenshot | What it is |
@@ -81,17 +81,17 @@ mutation check: 9 / 9 injected bugs detected          scalar 66 cycles vs 4 lane
 ```
 Full numbers (cycles, FPGA resources, Fmax): [`../results/DLS_MIRROR_RESULTS.md`](../results/DLS_MIRROR_RESULTS.md).
 
-## 7. Facts the team must confirm (marked as assumptions in the Verilog)
-| # | Item | What we assumed | How to confirm |
-|---|---|---|---|
-| 1 | What `COMPARE` tests | equality (`A == B`) - the screenshot only shows A = B = 112 -> 255 | key A = 96, B = 112 with opcode `101` and read the output (0 = equality; 255 would mean A <= B, A != B ...). Edit the marked line in `dls_rtl/compare8.v` if different |
-| 2 | Roles of the control inputs | `VECTOR-REGISTER-FILE`: load A, load B, clock; `RESULT-REGISTER-FILE`: result enable, clock | hover / test each button in DLS and fix the names in this table and in `docs` if they differ |
-| 3 | The 4-bit input + `4-1BIT` chip | carries the opcode bits (3 bits used) | tell us what the 4th bit does, if anything |
-| 4 | Opcodes `110` / `111` | unconnected -> output 0 | try them in DLS |
-| 5 | `dls/project/` | - | copy your DLS project folder here (see below) |
+## 7. Design facts (confirmed by the design owner and checked against the project files)
+| # | Item | Fact |
+|---|---|---|
+| 1 | What `COMPARE` tests | **Equality.** 255 when A = B, 0 when A != B. Built as `8-Bit-SUBTRACTOR` -> `8-1-ZERO` -> `1BIT-8BIT`. |
+| 2 | Control inputs of `SIMD_4LANE` | `Clk` is the clock; `LOAD-A` and `LOAD-B` are write enables of the A and B registers; `RESULT_WRITE` is the write enable of the result registers. |
+| 3 | The 4-bit input `IN` and the `4-1BIT` chip | `IN` carries the opcode. The simulator only offers a 4-bit input, the design needs 3 bits, so one bit is unused. `4-1BIT` is a splitter: 3 of its 4 outputs drive S2, S1, S0 of the four ALUs. |
+| 4 | Opcodes `110` / `111` | Reserved, do nothing yet (mux inputs unconnected; the Verilog outputs 0). |
 
-## 8. Add your DLS project files
-Copy the DLS project folder (the one that contains `SIMD_4LANE` and its sub-chips) into `dls/project/` and commit it, so evaluators can open the design in Digital Logic Sim.
+## 8. The Digital Logic Sim project files
+[`project/`](project/) is the complete Digital Logic Sim save (`SIMD_Processing_Unit`, DLS 2.1.6): `ProjectDescription.json` and `Chips/*.json`, one file per chip (31 chips including `SIMD_4LANE`).
+To open it: install Digital Logic Sim, copy the `SIMD_Processing_Unit` folder into its `Projects` folder (on macOS `~/Library/Application Support/com.DefaultCompany.2DProject/Projects/`), start the game and choose the project in the project list.
 
 ## 9. Demo procedure for the video (about 75 s)
 1. Open `SIMD_4LANE`; set A = 10, 20, 30, 40 and B = 1, 2, 3, 4; opcode `001` (SUB); pulse load, then the result enable -> outputs 9, 18, 27, 36.

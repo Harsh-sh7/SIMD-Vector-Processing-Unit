@@ -1,7 +1,8 @@
 // DLS chips: VECTOR-REGISTER-FILE and RESULT-REGISTER-FILE
 
 // VECTOR-REGISTER-FILE : 2 x LANES 8-Bit-REGISTER_EN  (operand vector A and operand vector B).
-// ASSUMPTION about the control circles in the DLS chip: load_a / load_b enable the A / B registers, clk is shared.
+// DLS control inputs (confirmed by the design owner): LOAD-A and LOAD-B are write enables of the A / B registers, Clk is the shared clock,
+// RESULT_WRITE is the write enable of the RESULT-REGISTER-FILE. (Verilog names: load_a, load_b, clk, result_en.)
 module vector_register_file #(
     parameter LANES = 4
 ) (

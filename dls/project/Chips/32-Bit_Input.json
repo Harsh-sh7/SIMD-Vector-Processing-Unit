@@ -1,0 +1,66 @@
+{
+  "DLSVersion": "2.1.6",
+  "Name": "32-Bit_Input",
+  "NameLocation": 0,
+  "ChipType": 0,
+  "Size": {
+    "x": 1.925,
+    "y": 2.0
+  },
+  "Colour": {
+    "r": 0.192758337,
+    "g": 0.222219914,
+    "b": 0.366818935,
+    "a": 1
+  },
+  "InputPins":[
+    {
+      "Name":"IN",
+      "ID":1556837227,
+      "Position":{
+        "x":-7.95194,
+        "y":0.63565
+      },
+      "BitCount":8,
+      "Colour":0,
+      "ValueDisplayMode":0
+    },
+    {
+      "Name":"IN",
+      "ID":1368630871,
+      "Position":{
+        "x":-7.95194,
+        "y":0.11815
+      },
+      "BitCount":8,
+      "Colour":0,
+      "ValueDisplayMode":0
+    },
+    {
+      "Name":"IN",
+      "ID":1296840913,
+      "Position":{
+        "x":-7.95194,
+        "y":-0.39935
+      },
+      "BitCount":8,
+      "Colour":0,
+      "ValueDisplayMode":0
+    },
+    {
+      "Name":"IN",
+      "ID":1491147164,
+      "Position":{
+        "x":-7.95194,
+        "y":-0.91685
+      },
+      "BitCount":8,
+      "Colour":0,
+      "ValueDisplayMode":0
+    }
+  ],
+  "OutputPins":[],
+  "SubChips":[],
+  "Wires":[],
+  "Displays": null
+}

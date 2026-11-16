@@ -1,0 +1,136 @@
+{
+  "DLSVersion": "2.1.6",
+  "Name": "COMPARE",
+  "NameLocation": 0,
+  "ChipType": 0,
+  "Size": {
+    "x": 1.175,
+    "y": 1.0
+  },
+  "Colour": {
+    "r": 0.203050151,
+    "g": 0.304281056,
+    "b": 0.107983038,
+    "a": 1
+  },
+  "InputPins":[
+    {
+      "Name":"A",
+      "ID":253573856,
+      "Position":{
+        "x":-6.03635,
+        "y":0.45502
+      },
+      "BitCount":8,
+      "Colour":0,
+      "ValueDisplayMode":0
+    },
+    {
+      "Name":"B",
+      "ID":234549996,
+      "Position":{
+        "x":-6.03635,
+        "y":-0.06248
+      },
+      "BitCount":8,
+      "Colour":0,
+      "ValueDisplayMode":0
+    }
+  ],
+  "OutputPins":[
+    {
+      "Name":"OUT",
+      "ID":889888472,
+      "Position":{
+        "x":4.51491,
+        "y":0.32467
+      },
+      "BitCount":1,
+      "Colour":0,
+      "ValueDisplayMode":0
+    }
+  ],
+  "SubChips":[
+    {
+      "Name":"8-Bit-SUBTRACTOR",
+      "ID":683770004,
+      "Label":"",
+      "Position":{
+        "x":-0.59778,
+        "y":0.31743
+      },
+      "OutputPinColourInfo":[{"PinColour":0,"PinID":1376893767}],
+      "InternalData":null
+    },
+    {
+      "Name":"8-1-ZERO",
+      "ID":1629249930,
+      "Label":"",
+      "Position":{
+        "x":2.34962,
+        "y":0.33191
+      },
+      "OutputPinColourInfo":[{"PinColour":0,"PinID":2103966539}],
+      "InternalData":null
+    }
+  ],
+  "Wires":[
+    {
+      "SourcePinAddress":{
+        "PinID":0,
+        "PinOwnerID":253573856
+      },
+      "TargetPinAddress":{
+        "PinID":934311381,
+        "PinOwnerID":683770004
+      },
+      "ConnectionType":0,
+      "ConnectedWireIndex":-1,
+      "ConnectedWireSegmentIndex":-1,
+      "Points":[{"x":0.0,"y":0.0},{"x":0.0,"y":0.0}]
+    },
+    {
+      "SourcePinAddress":{
+        "PinID":0,
+        "PinOwnerID":234549996
+      },
+      "TargetPinAddress":{
+        "PinID":1108686206,
+        "PinOwnerID":683770004
+      },
+      "ConnectionType":0,
+      "ConnectedWireIndex":-1,
+      "ConnectedWireSegmentIndex":-1,
+      "Points":[{"x":0.0,"y":0.0},{"x":0.0,"y":0.0}]
+    },
+    {
+      "SourcePinAddress":{
+        "PinID":1376893767,
+        "PinOwnerID":683770004
+      },
+      "TargetPinAddress":{
+        "PinID":1629754070,
+        "PinOwnerID":1629249930
+      },
+      "ConnectionType":0,
+      "ConnectedWireIndex":-1,
+      "ConnectedWireSegmentIndex":-1,
+      "Points":[{"x":0.0,"y":0.0},{"x":0.0,"y":0.0}]
+    },
+    {
+      "SourcePinAddress":{
+        "PinID":2103966539,
+        "PinOwnerID":1629249930
+      },
+      "TargetPinAddress":{
+        "PinID":0,
+        "PinOwnerID":889888472
+      },
+      "ConnectionType":0,
+      "ConnectedWireIndex":-1,
+      "ConnectedWireSegmentIndex":-1,
+      "Points":[{"x":0.0,"y":0.0},{"x":0.0,"y":0.0}]
+    }
+  ],
+  "Displays": null
+}
