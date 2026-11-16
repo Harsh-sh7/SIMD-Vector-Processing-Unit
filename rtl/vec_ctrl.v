@@ -86,3 +86,5 @@ module vec_ctrl #(
         end
     end
 endmodule
+
+// (reviewed: port widths / params consistent with simd_defs.vh)

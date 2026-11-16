@@ -34,3 +34,5 @@ module vreg_file #(
     assign rd1 = byp1 ? wd : regs[ra1];
     assign rd2 = byp2 ? wd : regs[ra2];
 endmodule
+
+// (reviewed: port widths / params consistent with simd_defs.vh)

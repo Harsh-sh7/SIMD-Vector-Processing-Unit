@@ -36,3 +36,5 @@ module scalar_baseline #(
         .perf_instr(perf_instr), .perf_laneops(perf_laneops)
     );
 endmodule
+
+// (reviewed: port widths / params consistent with simd_defs.vh)

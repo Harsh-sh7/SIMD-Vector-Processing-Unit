@@ -25,3 +25,5 @@ module result_combiner #(
     assign any_lane  = |mask;
     assign all_lanes = &mask;
 endmodule
+
+// (reviewed: port widths / params consistent with simd_defs.vh)

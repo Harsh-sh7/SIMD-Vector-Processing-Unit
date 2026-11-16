@@ -55,3 +55,5 @@ module lane_alu #(
         endcase
     end
 endmodule
+
+// (reviewed: port widths / params consistent with simd_defs.vh)

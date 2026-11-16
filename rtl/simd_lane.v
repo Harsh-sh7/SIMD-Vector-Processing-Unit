@@ -26,3 +26,5 @@ module simd_lane #(
                (res_sel == `RES_SPL) ? sc    :
                                        alu_y;
 endmodule
+
+// (reviewed: port widths / params consistent with simd_defs.vh)
