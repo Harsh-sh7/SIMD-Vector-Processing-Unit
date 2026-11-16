@@ -1,0 +1,25 @@
+#  result    mutation                                        file
+ 1 KILLED    SRA behaves as logical shift                   lane_alu.v
+ 2 KILLED    signed LT treated as unsigned                  lane_alu.v
+ 3 KILLED    SUB computes b-a                               lane_alu.v
+ 4 KILLED    MAX returns the minimum                        lane_alu.v
+ 5 KILLED    NE behaves like EQ                             lane_alu.v
+ 6 KILLED    shift amount taken from wrong bit slice        lane_alu.v
+ 7 KILLED    MUL returns low half of ADD                    lane_alu.v
+ 8 KILLED    bypass removed on read port 1                  vreg_file.v
+ 9 KILLED    bypass removed on read port 2                  vreg_file.v
+10 KILLED    hazard unit compares wrong vs1 bits            vec_ctrl.v
+11 KILLED    hazard unit ignores reg_we (false bypass)      vec_ctrl.v
+12 KILLED    VS form ignores scalar operand                 vec_ctrl.v
+13 KILLED    VLD does not write the register file           vec_ctrl.v
+14 KILLED    lane B-operand MUX stuck on vector reg         simd_lane.v
+15 KILLED    compare predicate takes wrong lane bit         result_combiner.v
+16 KILLED    ANY reduction implemented as ALL               result_combiner.v
+17 KILLED    SSET writes zero                               simd_vpu.v
+18 KILLED    VEXT always returns lane 0                     simd_vpu.v
+19 KILLED    store captures vs2 instead of vs1              simd_vpu.v
+20 KILLED    instr_valid ignored (junk executes)            simd_vpu.v
+21 KILLED    external scalar write ignored                  simd_vpu.v
+
+Mutation score: 21 / 21 mutants killed (100.0 %)
+EQUIVALENT mutant (load-capture clock-enable removed (power only)): survived as expected

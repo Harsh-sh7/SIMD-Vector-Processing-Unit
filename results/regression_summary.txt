@@ -1,0 +1,13 @@
+lane ALU exhaustive (W=8)  1048576 checks / 0 errors                                    PASS
+system TB  LANES=1 W=16    21196 instr, 2895 stores, 803 extracts, 10551 flag checks    PASS
+system TB  LANES=2 W=16    21132 instr, 2899 stores, 800 extracts, 10516 flag checks    PASS
+system TB  LANES=4 W=16    21157 instr, 2884 stores, 814 extracts, 10498 flag checks    PASS
+system TB  LANES=8 W=16    21227 instr, 2896 stores, 824 extracts, 10585 flag checks    PASS
+system TB  LANES=4 W=8     21157 instr, 2884 stores, 814 extracts, 10498 flag checks    PASS
+system TB  LANES=4 W=32    21157 instr, 2884 stores, 814 extracts, 10498 flag checks    PASS
+system TB  LANES=8 W=8     21227 instr, 2896 stores, 824 extracts, 10585 flag checks    PASS
+system TB  LANES=16 W=16   21214 instr, 2904 stores, 799 extracts, 10596 flag checks    PASS
+golden-vector replay W=8   192 vectors / 0 errors                                       PASS
+golden-vector replay W=16  192 vectors / 0 errors                                       PASS
+
+REGRESSION PASSED
