@@ -4,3 +4,4 @@ __pycache__/
 .DS_Store
 results/logs/
 results/perf_demo.vcd.bak
+_local_only/

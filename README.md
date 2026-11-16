@@ -32,34 +32,33 @@ Full tables: [`results/RESULTS.md`](results/RESULTS.md).  Frequencies are iCE40 
 
 | Path | Content |
 |---|---|
-| `rtl/` | **SIMD RTL**: `lane_alu`, `simd_lane` (operand MUX + ALU + result MUX), `vreg_file`, `vec_ctrl` (decode, hazard unit, perf counters), `result_combiner`, `simd_vpu` (top), `scalar_baseline`, `simd_defs.vh` |
-| `tb/` | `tb_lane_alu` (exhaustive), `tb_simd_vpu` (self-checking system TB + coverage), `tb_perf` (scalar-vs-SIMD workload), `tb_vectors` (golden-vector replay) |
-| `synth/` | `bench_top.v` - timing wrapper (serialises I/O so Fmax measures the core) |
-| `scripts/` | `run_tests.py`, `run_mutation.py`, `run_perf.py`, `run_synth.py`, `run_fmax_compare.py`, `make_plots.py`, `make_diagrams.py`, `plot_waveform.py`, `gen_dls_vectors.py` |
-| `vectors/` | Golden test vectors + printable **DLS cross-check sheets** |
-| `dls/` | **Digital Logic Sim SIMD_4LANE** design files and screenshots (see [`dls/README.md`](dls/README.md)) |
-| `results/` | CSVs, `RESULTS.md`, regression + mutation reports, `perf_demo.vcd`, tool evidence (`evidence/`) |
-| `docs/` | `ARCHITECTURE.md`, `DLS_MAPPING.md`, `VIDEO_SCRIPT.md`, `SUBMISSION_CHECKLIST.md`, `img/` |
-| `report/` | IEEE-format report (`.docx`) and its generator |
+| `rtl/` | SIMD RTL: `lane_alu`, `simd_lane`, `vreg_file`, `vec_ctrl`, `result_combiner`, `simd_vpu` (top), `scalar_baseline`, `simd_defs.vh` |
+| `tb/` | Testbenches: `tb_lane_alu` (exhaustive), `tb_simd_vpu` (self-checking + coverage), `tb_perf` (scalar vs SIMD), `tb_vectors` (golden vectors) |
+| `synth/` | `bench_top.v` - wrapper used for Fmax measurement |
+| `scripts/` | Python scripts behind the `make` targets, and the test-vector generator |
+| `vectors/` | Golden test vectors and printable DLS cross-check sheets |
+| `dls/` | Digital Logic Sim SIMD_4LANE design and screenshots |
+| `results/` | Measured results: `RESULTS.md` (tables), CSVs, regression and mutation reports |
+| `docs/` | `ARCHITECTURE.md` and figures |
+| `report/` | IEEE-format project report |
 
 ## Quick start
 
-Requirements: Icarus Verilog (tested with 13), Yosys, nextpnr-ice40, Python 3 + matplotlib. On macOS: `brew install icarus-verilog yosys nextpnr-ice40`.
+Requirements: Icarus Verilog (tested with 13), Yosys, nextpnr-ice40, Python 3. On macOS: `brew install icarus-verilog yosys nextpnr-ice40`.
 
 ```bash
-make test        # regression: ALU exhaustive + system TB (8 configs) + golden-vector replay   (~40 s)
-make mutation    # inject 21 bugs, confirm each is caught                                        (~1 min)
-make perf        # scalar (1 lane) vs 2/4/8/16 lanes, 3 kernels -> results/perf_cycles.csv
-make demo        # cycle-by-cycle trace of the 4-lane run + scalar-vs-SIMD table (use in the video)
-make synth       # resources (iCE40, iCE40+DSP, Xilinx-7 est.) + Fmax with nextpnr              (~10 min)
-make plots       # figures + results/RESULTS.md
+make test        # regression: ALU exhaustive + system TB (8 configs) + golden-vector replay
+make mutation    # 21 injected bugs, all must be caught
+make perf        # scalar (1 lane) vs 2/4/8/16 lanes -> results/perf_cycles.csv
+make demo        # cycle-by-cycle trace of the 4-lane run
+make synth       # FPGA resources and Fmax (~10 min)
 ```
 
-Run one simulation by hand:
+`LANES` and `W` are parameters of every module, e.g.:
 ```bash
 iverilog -g2012 -I rtl -Ptb_simd_vpu.LANES=8 -Ptb_simd_vpu.W=16 -o build/t.vvp tb/tb_simd_vpu.v rtl/*.v && vvp build/t.vvp
 ```
-(No space after `-P`.) `LANES` and `W` are parameters of every module; `W` up to 32 and any `LANES` >= 1 are tested.
+(no space after `-P`).
 
 ## How the SIMD unit works (short)
 
@@ -73,12 +72,12 @@ Details: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 ![waveform](docs/img/waveform.png)
 
 ## Digital Logic Sim implementation
-The same 4-lane concept was built from gates in Digital Logic Sim - see [`dls/README.md`](dls/README.md) and [`docs/DLS_MAPPING.md`](docs/DLS_MAPPING.md).
+The same 4-lane concept was built from gates in Digital Logic Sim - see [`dls/README.md`](dls/README.md).
 `vectors/DLS_TEST_SHEET_L4_W8.md` lists golden inputs/outputs; the same vectors are verified against the RTL (`tb/tb_vectors.v`), so RTL == Python model == DLS chip.
 
 ## Limitations (honest notes)
 * Load/store bandwidth is assumed to scale with lane count (ideal memory); real systems would be bandwidth-limited.
 * N = 64 elements, so the 2-cycle pipeline fill is visible (efficiency 98 % at 4 lanes, 92 % at 16).
-* Fmax is from iCE40 place-and-route (nextpnr); Xilinx numbers are a Yosys *estimate* (LUT/FF/DSP counts, no timing). Vivado results, if obtained, belong in `results/vivado/`.
+* Fmax is from iCE40 place-and-route (nextpnr); Xilinx numbers are a Yosys *estimate* (LUT/FF/DSP counts, no timing). 
 * The vector register file is flip-flop based (main FF cost); no divide, saturation, widening, or lane masking.
 * Pipeline optimisation (decode in F, pre-computed bypass) gave about +5 % Fmax at 4 lanes and no measurable change at 1 lane (`results/fmax_v1_vs_v2.csv`).
