@@ -65,7 +65,7 @@ Full tables: [`results/RESULTS.md`](results/RESULTS.md).  Frequencies are iCE40 
 | `vectors/` | Golden test vectors and printable DLS cross-check sheets |
 | `dls/` | **Digital Logic Sim SIMD_4LANE**: screenshots, chip-by-chip explanation, opcode table |
 | `results/` | Measured results: `RESULTS.md` (tables), CSVs, regression and mutation reports |
-| `docs/` | `ARCHITECTURE.md`, `VIDEO_SCRIPT.md`, figures |
+| `docs/` | `ARCHITECTURE.md`, figures |
 | `report/` | IEEE-format project report |
 
 ## Team and contributions
