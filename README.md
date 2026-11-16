@@ -5,7 +5,7 @@ We built a **4-lane x 8-bit SIMD chip from gates in Sebastian Lague's Digital Lo
 (verified against the DLS screenshots), generalised the idea into a **parameterised, pipelined Verilog SIMD core**, and compared **scalar vs SIMD** in
 cycle count, throughput, FPGA resources and maximum frequency.
 
-> Team: **[Member 1], [Member 2], [Member 3], [Member 4], [Member 5]**  |  Demo video: **[add link]**  |  Report: [`report/SIMD_VPU_IEEE_Report.docx`](report/SIMD_VPU_IEEE_Report.docx)
+> Newton School of Technology, Rishihood University - Team: **Harshit Shakya, Ishan Maheshwari, Shreyansh Agrawal, Tanishk Agrawal, Divyanshu Raj**  |  Demo video: **[add link]**  |  Report: [`report/SIMD_VPU_IEEE_Report.docx`](report/SIMD_VPU_IEEE_Report.docx)
 
 ## 1. The design we built: `SIMD_4LANE` in Digital Logic Sim + Verilog mirror
 `SIMD_4LANE` was built bottom-up from gates in Digital Logic Sim: **VECTOR-REGISTER-FILE (8 x 8-bit) -> 4 x 8-Bit-ALU -> RESULT-REGISTER-FILE (4 x 8-bit)**,
@@ -67,6 +67,16 @@ Full tables: [`results/RESULTS.md`](results/RESULTS.md).  Frequencies are iCE40 
 | `results/` | Measured results: `RESULTS.md` (tables), CSVs, regression and mutation reports |
 | `docs/` | `ARCHITECTURE.md`, `VIDEO_SCRIPT.md`, figures |
 | `report/` | IEEE-format project report |
+
+## Team and contributions
+
+| Member | Roll no. | Contribution |
+|---|---|---|
+| Harshit Shakya | 2401010183 | Digital Logic Sim: ALU chips, adder/subtractor, comparator, multiplexers; completed the `SIMD_4LANE` build on the simulator |
+| Ishan Maheshwari | 2401010194 | Digital Logic Sim: registers, `VECTOR-REGISTER-FILE`, `RESULT-REGISTER-FILE` |
+| Shreyansh Agrawal | 2401010447 | Verilog mirror of the DLS chips and the generalised parameterised RTL |
+| Tanishk Agrawal | 2401020071 | Testbenches, functional coverage, mutation testing |
+| Divyanshu Raj | 2401010160 | Synthesis and Fmax study, benchmarks, project report |
 
 ## Quick start
 
