@@ -40,3 +40,5 @@ def iverilog_run(top_tb, params, tag, rtl_dir=RTL, extra_src=(), plusargs=()):
         return False, txt
     rc, txt = run(["vvp", out] + list(plusargs))
     return True, txt
+
+# note: outputs under results/; re-run after any RTL change

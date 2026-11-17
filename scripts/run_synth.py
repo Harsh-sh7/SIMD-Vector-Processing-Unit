@@ -138,3 +138,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# note: outputs under results/; re-run after any RTL change
