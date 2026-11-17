@@ -49,3 +49,5 @@ Cycles = passes + 2 (one clock to load the operand registers, one to capture the
 | 2 | 162.0 | 161.4 | 1.96x |
 | 4 | 162.0 | 162.0 | 3.70x |
 | 8 | 145.8 | 141.6 | 6.00x |
+
+_Cross-checked with the DLS mirror CSVs._

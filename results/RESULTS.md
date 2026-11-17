@@ -86,3 +86,5 @@ HX8K has 7680 LUT4: the 8-lane LUT-multiplier build (7945 LUTs) does not fit. UP
 
 v1 = decode and bypass-compare inside the execute stage; v2 (final) = decode registered in stage F and bypass flags pre-computed one cycle early.
 
+
+_Verified against tb_perf.v regression run._

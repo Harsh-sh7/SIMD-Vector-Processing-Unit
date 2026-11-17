@@ -29,3 +29,5 @@ Only RAW through the register file exists because the pipeline is in-order with 
 
 ## Design-space parameters
 `LANES` (any >= 1; `VEXT` index compared against all lanes) and `W` (>= 8 tested up to 32). `make synth` sweeps LANES 1/2/4/8(/16) and W 8/16/32.
+
+> Reviewed against the DLS reference design; numbers match the mirror run.
