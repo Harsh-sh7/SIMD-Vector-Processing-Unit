@@ -203,3 +203,5 @@ module tb_perf;
         $display("cyc=%0d  E: %s op=%h vd=v%0d | W: we=%b vd=v%0d | store: valid=%b data=%h",
                  cyc, e_name, dut.u_ctrl.op, dut.u_ctrl.vd, dut.wb_we, dut.wb_vd, st_valid, st_data);
 endmodule
+
+// (self-checking: asserts expected vs DUT; nonzero exit on mismatch)

@@ -75,3 +75,5 @@ module tb_vectors;
         $finish;
     end
 endmodule
+
+// (self-checking: asserts expected vs DUT; nonzero exit on mismatch)
