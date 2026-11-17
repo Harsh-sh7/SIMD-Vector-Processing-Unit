@@ -1,10 +1,17 @@
 # SIMD Vector Processing Unit.  Requires: iverilog, yosys, nextpnr-ice40, python3
 PY ?= python3
 
-.PHONY: test dls dls-full mutation perf synth demo clean
+.PHONY: test vectors dls dls-full mutation perf synth demo clean
 
 test:      ## regression: exhaustive lane ALU + system testbench (8 configs) + golden-vector replay
 	$(PY) scripts/run_tests.py
+
+vectors:   ## regenerate the golden vectors + printable sheets (DLS 4x8, RTL 4x16) and replay both through the RTL
+	@mkdir -p build
+	$(PY) scripts/gen_dls_vectors.py --lanes 4 --width 8
+	$(PY) scripts/gen_dls_vectors.py --lanes 4 --width 16
+	iverilog -g2012 -I rtl -Ptb_vectors.LANES=4 -Ptb_vectors.W=8 '-Ptb_vectors.FILE="vectors/vectors_L4_W8.mem"' -o build/vec8.vvp tb/tb_vectors.v rtl/*.v && vvp build/vec8.vvp | grep -E "MISMATCH|replayed|PASSED|FAILED"
+	iverilog -g2012 -I rtl -Ptb_vectors.LANES=4 -Ptb_vectors.W=16 '-Ptb_vectors.FILE="vectors/vectors_L4_W16.mem"' -o build/vec16.vvp tb/tb_vectors.v rtl/*.v && vvp build/vec16.vvp | grep -E "MISMATCH|replayed|PASSED|FAILED"
 
 dls:       ## Verilog mirror of the Digital Logic Sim chips: screenshot cases, tests, mutation check, 1-vs-4-lane cycles (~30 s)
 	$(PY) scripts/run_dls_mirror.py --quick

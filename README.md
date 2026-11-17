@@ -62,7 +62,7 @@ Full tables: [`results/RESULTS.md`](results/RESULTS.md).  Frequencies are iCE40 
 | `tb/` | Testbenches: `tb_dls_mirror`, `tb_dls_perf` (DLS design); `tb_lane_alu`, `tb_simd_vpu`, `tb_perf`, `tb_vectors` (generalised RTL) |
 | `synth/` | `bench_top.v` - wrapper used for Fmax measurement |
 | `scripts/` | Python scripts behind the `make` targets, and the test-vector generator |
-| `vectors/` | Golden test vectors and printable DLS cross-check sheets |
+| `vectors/` | Golden test vectors (`.mem`), the printable DLS sheet `DLS_TEST_SHEET_L4_W8.md` (DLS opcodes, decimal values) and an RTL sheet for 16-bit lanes |
 | `dls/` | **Digital Logic Sim SIMD_4LANE**: screenshots, chip-by-chip explanation, opcode table |
 | `results/` | Measured results: `RESULTS.md` (tables), CSVs, regression and mutation reports |
 | `docs/` | `ARCHITECTURE.md`, figures |
@@ -85,6 +85,7 @@ Requirements: Icarus Verilog (tested with 13), Yosys, nextpnr-ice40, Python 3. O
 ```bash
 make dls         # DLS-chip Verilog mirror: screenshot cases, tests, mutation check, 1-vs-4-lane cycles
 make test        # full regression: DLS mirror + ALU exhaustive + system TB (8 configs) + golden vectors
+make vectors     # regenerate golden vectors + DLS / RTL cross-check sheets, replay them through the RTL
 make mutation    # 21 injected bugs, all must be caught
 make perf        # scalar (1 lane) vs 2/4/8/16 lanes -> results/perf_cycles.csv
 make demo        # cycle-by-cycle trace of the 4-lane run

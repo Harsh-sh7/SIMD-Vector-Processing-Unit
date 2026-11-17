@@ -1,10 +1,10 @@
-# DLS cross-check sheet  (4 lanes x 16 bit)
+# Generalised-RTL cross-check sheet  (4 lanes x 16 bit)
 
-Key operands A and B into the DLS chip, select the opcode, compare each lane with the EXPECTED column. Values are hex (lane 0 = least-significant lane); the signed decimal of the result is in brackets. The same vectors are verified against the Verilog RTL in simulation (`make vectors`).
+For the generalised Verilog core (`rtl/`). The DLS chip is 4 lanes x 8 bit with six operations, so these rows cannot be keyed into it; use `DLS_TEST_SHEET_L4_W8.md` for the simulator. Op codes are the RTL codes. Values are hex (lane 0 = least-significant lane); the signed decimal of the result is in brackets. The same vectors are replayed through the RTL by `make vectors`.
 
 Shift ops use the shift amount `B mod 16` (low 4 bits of B). Compare ops return all-ones (true) or 0 (false) per lane.
 
-| # | Op (code) | A (L3..L0) | B (L3..L0) | EXPECTED (L3..L0) | DLS result | OK? |
+| # | Op (RTL code) | A (L3..L0) | B (L3..L0) | EXPECTED (L3..L0) | Result | OK? |
 |---|---|---|---|---|---|---|
 | 1 | ADD (0) | 8000 FFFF 0001 0000 | 00AA 0055 7FFF 8000 | 80AA(-32598) 0054(84) 8000(-32768) 8000(-32768) |  |  |
 | 2 | ADD (0) | 7FFF 8000 FFFF 0001 | 0002 000F 00AA 0055 | 8001(-32767) 800F(-32753) 00A9(169) 0056(86) |  |  |
